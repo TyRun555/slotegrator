@@ -2,15 +2,18 @@
 
 namespace app\controllers;
 
+use app\controllers\base\BaseController;
+use app\services\GameService;
 use Yii;
 use yii\filters\AccessControl;
-use yii\web\Controller;
+use yii\helpers\Url;
+use yii\web\Cookie;
 use yii\web\Response;
 use yii\filters\VerbFilter;
-use app\models\LoginForm;
-use app\models\ContactForm;
+use app\models\form\UserLoginForm;
+use app\models\form\PrizeDeliveryForm;
 
-class SiteController extends Controller
+class SiteController extends BaseController
 {
     /**
      * {@inheritdoc}
@@ -19,7 +22,7 @@ class SiteController extends Controller
     {
         return [
             'access' => [
-                'class' => AccessControl::className(),
+                'class' => AccessControl::class,
                 'only' => ['logout'],
                 'rules' => [
                     [
@@ -30,7 +33,7 @@ class SiteController extends Controller
                 ],
             ],
             'verbs' => [
-                'class' => VerbFilter::className(),
+                'class' => VerbFilter::class,
                 'actions' => [
                     'logout' => ['post'],
                 ],
@@ -55,13 +58,28 @@ class SiteController extends Controller
     }
 
     /**
-     * Displays homepage.
+     * Displays game page.
      *
-     * @return string
+     * @return string - view string
+     * @throws \yii\base\Exception - if something wrong with game service
      */
     public function actionIndex()
     {
-        return $this->render('index');
+        if (Yii::$app->user->isGuest) {
+            return $this->render('index');
+        }
+        if ($this->request->isPost) {
+            if ($this->request->post('play')) {
+                $gameService = new GameService();
+                $prize = $gameService->getPrize();
+                $prizeView = $prize->getView();
+                return $this->render('win', compact('prizeView', 'prize'));
+            } elseif ($this->request->post('accept')) {
+                return $this->render('accept', compact('prizeView'));
+            }
+
+        }
+        return $this->render('game');
     }
 
     /**
@@ -69,18 +87,20 @@ class SiteController extends Controller
      *
      * @return Response|string
      */
-    public function actionLogin()
+    public function actionLogin(): Response|string
     {
         if (!Yii::$app->user->isGuest) {
             return $this->goHome();
         }
 
-        $model = new LoginForm();
-        if ($model->load(Yii::$app->request->post()) && $model->login()) {
-            return $this->goBack();
+        $model = new UserLoginForm();
+        if ($model->load($this->request->post())) {
+            if ($model->login())
+                return $this->redirect(Url::home());
+            else {
+                $model->password = '';
+            }
         }
-
-        $model->password = '';
         return $this->render('login', [
             'model' => $model,
         ]);
@@ -91,7 +111,7 @@ class SiteController extends Controller
      *
      * @return Response
      */
-    public function actionLogout()
+    public function actionLogout(): Response
     {
         Yii::$app->user->logout();
 
@@ -105,8 +125,8 @@ class SiteController extends Controller
      */
     public function actionContact()
     {
-        $model = new ContactForm();
-        if ($model->load(Yii::$app->request->post()) && $model->contact(Yii::$app->params['adminEmail'])) {
+        $model = new PrizeDeliveryForm();
+        if ($model->load($this->request->post()) && $model->contact(Yii::$app->params['adminEmail'])) {
             Yii::$app->session->setFlash('contactFormSubmitted');
 
             return $this->refresh();
