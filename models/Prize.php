@@ -20,8 +20,10 @@ class Prize extends BaseAR
 {
     /** @var int - prize available to be won */
     const STATUS_AVAILABLE = 1;
-    /** @var int - prize hase been won */
-    const STATUS_WON = 2;
+    /** @var int - prize hase been won but not yet accepted */
+    const STATUS_PENDING = 2;
+    /** @var int - prize hase been won and accepted */
+    const STATUS_WON = 3;
 
     /**
      * {@inheritdoc}

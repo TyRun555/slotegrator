@@ -70,6 +70,9 @@ $config = [
             'formatters' => [
                 'json' => JsonFormatter::class
             ]
+        ],
+        'formatter' => [
+            'currencyCode' => $_ENV['CURRENCY_CODE']
         ]
     ],
     'params' => $params,

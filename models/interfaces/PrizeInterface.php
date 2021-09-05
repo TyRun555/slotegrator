@@ -47,7 +47,7 @@ interface PrizeInterface
     public function hash(): string;
 
     /**
-     * @return string - restor object attributes from hash string
+     * @return void - restore object attributes from hash string
      */
-    public function restoreFromHash(string $hash): string;
+    public function restoreFromHash(string $hash);
 }

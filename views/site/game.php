@@ -3,7 +3,7 @@
 
 use yii\bootstrap4\Html;
 
-
+$this->title = 'Play';
 ?>
 <div class="site-index">
     <div class="jumbotron text-center bg-transparent">

@@ -15,6 +15,9 @@ use yii\db\ActiveQuery;
 use yii\db\Expression;
 
 /**
+ * Represents item prize
+ * Manually processing with sending by post
+ * Needs delivery address
  *
  * @property-read ActiveQuery $log
  * @property-read string $description
@@ -36,23 +39,29 @@ class PrizeItem extends BaseModel implements PrizeInterface
         if (!$this->item) {
             throw new Exception(Yii::t('app', 'We are sorry, no prizes left!'));
         }
+        $this->item->status = Prize::STATUS_PENDING;
+        $this->item->save(false);
     }
 
+    /** @inheritdoc */
     public function getView(): ?string
     {
         return '/prize/prize-item';
     }
 
+    /** @inheritdoc */
     public function getType(): string
     {
         return Yii::t('app', 'item');
     }
 
+    /** @inheritdoc */
     public function getTitle(): string
     {
         return Yii::t('app', $this->item->title);
     }
 
+    /** @inheritdoc */
     public function getDescription(): string
     {
         return Yii::t('app', $this->item->description)
@@ -60,11 +69,13 @@ class PrizeItem extends BaseModel implements PrizeInterface
             . Yii::t('app', 'Fill the form below to get the prize');
     }
 
+    /** @inheritdoc */
     public function getLog(): ActiveQuery
     {
         return PrizeLog::find()->where(['prize_type' => PrizeFactory::TYPE_ITEM, 'user_id' => Yii::$app->user->id]);
     }
 
+    /** @inheritdoc */
     public function handleReceiving(int $acceptType = null): bool
     {
         $staffNotification = new StaffNotification([
@@ -75,26 +86,23 @@ class PrizeItem extends BaseModel implements PrizeInterface
         return $this->item->save();
     }
 
+    /** @inheritdoc */
     public function getAmount(): int
     {
         return 1;
     }
 
+    /** @inheritdoc */
     public function hash(): string
     {
-        return Yii::$app->security->encryptByKey(json_encode(['item' => (array)$this->item]), $_ENV['PRIZES_HASH_KEY']);
+        return Yii::$app->security->encryptByKey(json_encode(['itemId' => $this->item->id]), $_ENV['PRIZES_HASH_KEY']);
     }
 
-    /**
-     * restore prize data from hash
-     *
-     * @param string $hash
-     * @return string
-     */
-    public function restoreFromHash(string $hash): string
+    /** @inheritdoc */
+    public function restoreFromHash(string $hash): void
     {
-        $prizePayLoad = json_decode(Yii::$app->security->decryptByKey($hash, $_ENV['PRIZES_HASH_KEY']))['item'];
-        $this->item = Prize::findOne($prizePayLoad);
+        $prizeId = json_decode(Yii::$app->security->decryptByKey($hash, $_ENV['PRIZES_HASH_KEY']))['itemId'];
+        $this->item = Prize::findOne($prizeId);
     }
 
     /**

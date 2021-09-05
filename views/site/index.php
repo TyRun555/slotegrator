@@ -6,7 +6,7 @@ use yii\helpers\Url;
 /** @var $prizeView string */
 /** @var $prize \app\models\interfaces\PrizeInterface */
 
-$this->title = Yii::$app->name;
+$this->title = Yii::$app->id;
 ?>
 <div class="site-index">
     <div class="jumbotron text-center bg-transparent">

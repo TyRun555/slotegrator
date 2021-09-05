@@ -5,6 +5,7 @@ use yii\helpers\Html;
 /* @var $prizeView string */
 /* @var $prize \app\models\interfaces\PrizeInterface */
 
+$this->title = 'You won!';
 ?>
 <div class="site-index">
     <div class="jumbotron text-center bg-transparent">

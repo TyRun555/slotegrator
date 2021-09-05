@@ -1,8 +1,9 @@
 <?php
 
-/* @var $this \yii\web\View */
-
-/* @var $content string */
+/**
+ * @var $this \yii\web\View
+ * @var $content string
+ */
 
 use app\assets\AppAsset;
 use app\widgets\Alert;
@@ -41,17 +42,17 @@ AppAsset::register($this);
     ];
 
     if (Yii::$app->user->isGuest) {
-        $items[] =  ['label' => 'SignIn', 'url' => ['/site/login']];
+        $items[] = ['label' => 'SignIn', 'url' => ['/site/login']];
     } else {
         $items[] = ['label' => 'Account', 'url' => ['/account/index']];
         $items[] = '<li>'
-                    . Html::beginForm(['/site/logout'], 'post', ['class' => 'form-inline'])
-                    . Html::submitButton(
-                        'Logout (' . Yii::$app->user->identity?->username . ')',
-                        ['class' => 'btn btn-link logout']
-                    )
-                    . Html::endForm()
-                    . '</li>';
+            . Html::beginForm(['/site/logout'], 'post', ['class' => 'form-inline'])
+            . Html::submitButton(
+                'Logout (' . Yii::$app->user->identity?->username . ')',
+                ['class' => 'btn btn-link logout']
+            )
+            . Html::endForm()
+            . '</li>';
     }
 
     echo Nav::widget([
@@ -74,8 +75,13 @@ AppAsset::register($this);
 
 <footer class="footer mt-auto py-3 text-muted">
     <div class="container">
-        <p class="float-left">&copy; My Company <?= date('Y') ?></p>
-        <p class="float-right"><?= Yii::powered() ?></p>
+        <p class="float-left">&copy; TyRun <?= date('Y') ?></p>
+        <p class="float-right">
+            <?= \Yii::t('yii', 'Powered by {yii}', [
+                'yii' => '<a href="https://www.yiiframework.com/" target="_blank" rel="external">'
+                    . \Yii::t('yii', 'Yii Framework') . '</a>'
+            ]) ?>
+        </p>
     </div>
 </footer>
 

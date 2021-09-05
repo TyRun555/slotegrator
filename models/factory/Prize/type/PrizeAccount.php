@@ -12,6 +12,8 @@ use Yii;
 use yii\db\ActiveQuery;
 
 /**
+ * Represents account points prize
+ * Supplements user account
  *
  * @property-read ActiveQuery $log
  * @property-read string $description
@@ -69,7 +71,7 @@ class PrizeAccount extends BaseModel implements PrizeInterface
         return Yii::$app->security->encryptByKey(json_encode(['amount' => $this->amount]), $_ENV['PRIZES_HASH_KEY']);
     }
 
-    public function restoreFromHash(string $hash): string
+    public function restoreFromHash(string $hash): void
     {
         $this->amount = json_decode(Yii::$app->security->decryptByKey($hash, $_ENV['PRIZES_HASH_KEY']))['amount'];
     }
