@@ -1,7 +1,9 @@
 <?php
 
-/* @var $this \yii\web\View */
-/* @var $content string */
+/**
+ * @var $this \yii\web\View
+ * @var $content string
+ */
 
 use app\assets\AppAsset;
 use app\widgets\Alert;
@@ -34,25 +36,32 @@ AppAsset::register($this);
             'class' => 'navbar navbar-expand-md navbar-dark bg-dark fixed-top',
         ],
     ]);
+
+    $items = [
+        ['label' => 'Home', 'url' => ['/site/index']],
+    ];
+
+    if (Yii::$app->user->isGuest) {
+        $items[] = ['label' => 'SignIn', 'url' => ['/site/login']];
+    } else {
+        $accountPoints = Yii::$app->user->identity->account->amount;
+        $items[] = [
+            'label' => Yii::t('app', 'Account: {points} points', ['points' => $accountPoints]),
+            'url' => ['/account/index']];
+        $items[] = '<li>'
+            . Html::beginForm(['/site/logout'], 'post', ['class' => 'form-inline'])
+            . Html::submitButton(
+                'Logout (' . Yii::$app->user->identity?->username . ')',
+                ['class' => 'btn btn-link logout']
+            )
+            . Html::endForm()
+            . '</li>';
+    }
+
+
     echo Nav::widget([
         'options' => ['class' => 'navbar-nav'],
-        'items' => [
-            ['label' => 'Home', 'url' => ['/site/index']],
-            ['label' => 'About', 'url' => ['/site/about']],
-            ['label' => 'Contact', 'url' => ['/site/contact']],
-            Yii::$app->user->isGuest ? (
-                ['label' => 'Login', 'url' => ['/site/login']]
-            ) : (
-                '<li>'
-                . Html::beginForm(['/site/logout'], 'post', ['class' => 'form-inline'])
-                . Html::submitButton(
-                    'Logout (' . Yii::$app->user->identity->username . ')',
-                    ['class' => 'btn btn-link logout']
-                )
-                . Html::endForm()
-                . '</li>'
-            )
-        ],
+        'items' => $items,
     ]);
     NavBar::end();
     ?>
@@ -70,8 +79,13 @@ AppAsset::register($this);
 
 <footer class="footer mt-auto py-3 text-muted">
     <div class="container">
-        <p class="float-left">&copy; My Company <?= date('Y') ?></p>
-        <p class="float-right"><?= Yii::powered() ?></p>
+        <p class="float-left">&copy; TyRun <?= date('Y') ?></p>
+        <p class="float-right">
+            <?= Yii::t('yii', 'Powered by {yii}', [
+                'yii' => '<a href="https://www.yiiframework.com/" target="_blank" rel="external">'
+                    . Yii::t('yii', 'Yii Framework') . '</a>'
+            ]) ?>
+        </p>
     </div>
 </footer>
 
