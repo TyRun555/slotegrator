@@ -57,3 +57,7 @@ The clear command clears the queue.
 ``yii queue/remove [id]``
 
 The remove command removes a job from the queue.
+
+###Tests
+
+Run ``./vendor/bin/codecept run`` 
