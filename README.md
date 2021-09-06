@@ -1,4 +1,5 @@
-#Slotegrator test app
+# Slotegrator test app
+
 Php app based on Yii2 framework, which allows an authorized user to win a random prize.
 
 There are 3 types of prizes:
@@ -8,9 +9,10 @@ There are 3 types of prizes:
 
 All bank account transfer are made via queue. (database provider)
 
-####Sign up and win your prize!
+#### Sign up and win your prize!
 
-###Installation
+### Installation
+
 - clone repo
 - run ``composer install``
 - provide environment in .env.local (need to create one from example .env)
@@ -19,10 +21,14 @@ All bank account transfer are made via queue. (database provider)
 - run ``./yii serve`` or use your local web server (webroot is web/)
 - open app in browser
 
-###Usage
-####Web
+### Usage
+
+#### Web
+
 First you need to sign up, then press the "get the prize" button. Follow further app instructions.
-####Console
+
+#### Console
+
 - ``./yii prize/add-prize "{title}" "{description}" {status}`` use it to add an item prize
 - ``./yii prize/change-prize {id} "{attribute}" "{value}"`` use it to change attribute of the item prize
 
@@ -58,6 +64,6 @@ The clear command clears the queue.
 
 The remove command removes a job from the queue.
 
-###Tests
+### Tests
 
 Run ``./vendor/bin/codecept run`` 
