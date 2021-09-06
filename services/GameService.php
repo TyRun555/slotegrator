@@ -53,7 +53,7 @@ class GameService
      */
     public function getPrize(): PrizeInterface
     {
-        if(Yii::$app->session->get('prizeAccepted'))
+        if(!$this->canPlay())
         {
             throw new NotAcceptableHttpException(Yii::t('app', 'You already got your prize!'));
         }
@@ -218,5 +218,15 @@ class GameService
     {
         Yii::$app->session->set('prizeAccepted', true);
     }
+    
+    /**
+     * Checks wether user can play or not
+     * @return bool
+     */
+    private function canPlay(): bool
+    {
+        return !(bool)Yii::$app->session->get('prizeAccepted');
+    }
     //endregion
+    
 }
