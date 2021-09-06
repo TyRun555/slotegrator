@@ -12,7 +12,7 @@ $this->title = Yii::t('app', 'Play');
         <?php
         echo Html::beginForm();
         echo Html::submitButton(Yii::t('app', 'Get the prize'), [
-            'name'  => 'play',
+            'name' => 'play',
             'value' => 1,
             'class' => 'btn btn-lg btn-success'
         ]);

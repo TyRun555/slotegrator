@@ -4,13 +4,17 @@ namespace app\models\interfaces;
 
 use yii\db\ActiveQuery;
 
+/**
+ * Core prize interface
+ * implement it if you want to add prize type
+ */
 interface PrizeInterface
 {
     /**
      * @return string|null - path of view file which renders prize details
      */
     public function getView(): ?string;
-    
+
     /**
      * @return string|null - path of view file which renders prize accept info
      */
@@ -55,7 +59,7 @@ interface PrizeInterface
      * @return void - restore object attributes from data array specific for each prize type
      */
     public function restore(object $data);
-    
+
     /**
      * Each prize type should be reserved while user won it but not yet accepted
      * if it's not necessary just return true in implementation
@@ -63,7 +67,7 @@ interface PrizeInterface
      * @return bool - whether reserving was successful
      */
     public function reserve(): bool;
-    
+
     /**
      * Each prize type must be restored when user rejects the won prize
      * if it's not necessary just return true in implementation

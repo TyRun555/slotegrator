@@ -27,7 +27,7 @@ class PrizeFactory
         self::TYPE_ACCOUNT => PrizeAccount::class,
         self::TYPE_ITEM => PrizeItem::class
     ];
-    
+
     /**
      * Create prize by provided type
      *
@@ -38,7 +38,7 @@ class PrizeFactory
     {
         return new (self::TYPES_CLASS_MAPPING[$type])();
     }
-    
+
     /**
      * Create prize object from hash string
      * Use it to get current user prize that was won but yet not accepted
@@ -49,7 +49,7 @@ class PrizeFactory
     {
         $restore = true;
         $data = json_decode(Yii::$app->security->decryptByKey($hash, $_ENV['PRIZES_HASH_KEY']));
-        
+
         $prize = new (self::TYPES_CLASS_MAPPING[$data->type])([], $restore);
         $prize->restore($data);
         return $prize;

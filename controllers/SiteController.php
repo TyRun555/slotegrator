@@ -3,25 +3,27 @@
 namespace app\controllers;
 
 use app\controllers\base\BaseController;
-use app\models\factory\Prize\PrizeFactory;
 use app\models\factory\Prize\type\PrizeItem;
+use app\models\form\PrizeDeliveryForm;
+use app\models\StaffNotification;
 use app\services\GameService;
+use JetBrains\PhpStorm\ArrayShape;
 use Yii;
 use yii\base\Exception;
 use yii\filters\AccessControl;
 use yii\helpers\Url;
-use yii\web\Cookie;
+use yii\web\NotFoundHttpException;
 use yii\web\Response;
 use yii\filters\VerbFilter;
 use app\models\form\UserLoginForm;
-use app\models\form\PrizeDeliveryForm;
 
 class SiteController extends BaseController
 {
     /**
      * {@inheritdoc}
      */
-    public function behaviors()
+    #[ArrayShape(['access' => "array", 'verbs' => "array"])]
+    public function behaviors(): array
     {
         return [
             'access' => [
@@ -47,7 +49,8 @@ class SiteController extends BaseController
     /**
      * {@inheritdoc}
      */
-    public function actions()
+    #[ArrayShape(['error' => "string[]", 'captcha' => "array"])]
+    public function actions(): array
     {
         return [
             'error' => [
@@ -66,32 +69,70 @@ class SiteController extends BaseController
      * @return string - view string
      * @throws Exception - if something wrong with game service
      */
-    public function actionIndex()
+    public function actionIndex(): string
     {
         if (Yii::$app->user->isGuest) {
             return $this->render('index');
         }
+        $gameService = new GameService();
+        if (!$gameService->canPlay()) {
+            throw new NotFoundHttpException(Yii::t('app', 'You already got your prize!'));
+        }
         if ($this->request->isPost) {
-            $gameService = new GameService();
             if ($this->request->post('play')) {
-                
+
                 $prize = $gameService->getPrize();
                 return $this->render('win', compact('prize'));
-                
+
             } elseif ($this->request->post('replay')) {
-                
-                $gameService->releaseCurrent();
+
+                $gameService->releaseCurrentPrize();
                 $prize = $gameService->getPrize();
                 return $this->render('win', compact('prize'));
-                
+
             } elseif ($this->request->post('accept')) {
-                $prize = $gameService->acceptCurrent();
+
+                $prize = $gameService->acceptCurrentPrize();
                 return $this->render('accept', compact('prize'));
-                
+
             }
 
         }
         return $this->render('game');
+    }
+
+    /**
+     * Handle provided delivery address
+     * @return string
+     */
+    public function actionPrizeItemDelivery(): string
+    {
+        $gameService = new GameService();
+
+        /**
+         * @var PrizeItem $prize
+         */
+        $prize = $gameService->getCurrentPrize();
+        if (!$prize instanceof PrizeItem) {
+            $this->goHome();
+        }
+
+        $addressForm = new PrizeDeliveryForm();
+        $addressForm->load(Yii::$app->request->post());
+        if ($addressForm->validate()) {
+            $staffNotification = new StaffNotification([
+                'message_template' => StaffNotification::TEMPLATE_PRIZE_ITEM,
+                'user_id' => Yii::$app->user->id,
+                'data' => [
+                    'prize id' => $prize->item->id,
+                    'prize title' => $prize->item->title,
+                    'delivery address' => implode(', ', $addressForm->attributes())
+                ]
+            ]);
+            $staffNotification->save(false);
+        }
+
+        return $this->render('accept', compact('prize', 'addressForm'));
     }
 
     /**
@@ -126,35 +167,6 @@ class SiteController extends BaseController
     public function actionLogout(): Response
     {
         Yii::$app->user->logout();
-
         return $this->goHome();
-    }
-
-    /**
-     * Displays contact page.
-     *
-     * @return Response|string
-     */
-    public function actionContact()
-    {
-        $model = new PrizeDeliveryForm();
-        if ($model->load($this->request->post()) && $model->contact(Yii::$app->params['adminEmail'])) {
-            Yii::$app->session->setFlash('contactFormSubmitted');
-
-            return $this->refresh();
-        }
-        return $this->render('contact', [
-            'model' => $model,
-        ]);
-    }
-
-    /**
-     * Displays about page.
-     *
-     * @return string
-     */
-    public function actionAbout()
-    {
-        return $this->render('about');
     }
 }

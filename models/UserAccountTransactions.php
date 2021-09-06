@@ -3,7 +3,9 @@
 namespace app\models;
 
 use app\models\base\BaseAR;
+use JetBrains\PhpStorm\ArrayShape;
 use Yii;
+use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveQuery;
 
 /**
@@ -20,14 +22,14 @@ use yii\db\ActiveQuery;
 class UserAccountTransactions extends BaseAR
 {
     //region Type Constants
-    /** @var int - increase user account amount  */
+    /** @var int - increase user account amount */
     const TYPE_INCREASE = 1;
-    /** @var int - decrease user account amount  */
+    /** @var int - decrease user account amount */
     const TYPE_DECREASE = 2;
     //endregion
 
     //region Direction Constants
-    /** @var int - transaction for wining the prize  */
+    /** @var int - transaction for wining the prize */
     const DIRECTION_FROM_SERVICE_TO_USER = 1;
     //endregion
 
@@ -50,16 +52,28 @@ class UserAccountTransactions extends BaseAR
             [['account_id', 'created_at', 'amount_change', 'type', 'direction'], 'integer'],
             [['account_id'], 'unique'],
             [['account_id'], 'exist', 'skipOnError' => true, 'targetClass' => UserAccount::class, 'targetAttribute' => ['account_id' => 'id']],
-            ['amount_change', 'validateAmountChange', 'when' => function(self $model) {
+            ['amount_change', 'validateAmountChange', 'when' => function (self $model) {
                 return $model->type === self::TYPE_DECREASE;
             }]
         ];
     }
 
+    public function behaviors(): array
+    {
+        return array_merge(parent::behaviors(), [
+            'timestamp' => [
+                'class' => TimestampBehavior::class,
+                'createdAtAttribute' => 'created_at',
+                'updatedAtAttribute' => false,
+                'value' => time()
+            ]
+        ]);
+    }
+
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels()
+    public function attributeLabels(): array
     {
         return [
             'id' => Yii::t('app', 'ID'),

@@ -11,7 +11,7 @@ use yii\web\View;
 <div class="row">
     <div class="col-12">
         <h2><?= Yii::t('app', 'Your prize is {prizeTitle}!', ['prizeTitle' => $prize->getTitle()]) ?></h2>
-        <h3><?= Yii::t('app', 'Amount: {amount}', ['amount' => Yii::$app->formatter->asCurrency($prize->getAmount())])?></h3>
+        <h3><?= Yii::t('app', 'Amount: {amount}', ['amount' => Yii::$app->formatter->asCurrency($prize->getAmount())]) ?></h3>
         <small><?= $prize->getDescription() ?></small>
     </div>
 </div>

@@ -25,12 +25,12 @@ class UserRequestPasswordResetForm extends BaseModel
             ['email', 'exist',
                 'targetClass' => User::class,
                 'filter' => ['status' => User::STATUS_ACTIVE],
-                'message' => 'There is no user with this email address.'
+                'message' => Yii::t('app', 'There is no user with this email address.')
             ],
         ];
     }
 
-    #[ArrayShape(['email' => "string"])]
+    #[ArrayShape(['email' => 'string'])]
     public function attributeLabels(): array
     {
         return [
@@ -63,13 +63,13 @@ class UserRequestPasswordResetForm extends BaseModel
             }
         }
 
-        $link = Html::a('here', Url::to(["/user/reset-password/", 'token' =>  $user->password_reset_token]), ['target' => "_blank"]);
+        $link = Html::a('here', Url::to(['/user/reset-password/', 'token' => $user->password_reset_token]), ['target' => '_blank']);
 
         return Yii::$app->mailer->compose()
             ->setFrom(Yii::$app->params['supportEmail'])
             ->setTo($user->email)
-            ->setSubject(Yii::$app->name . ": password reset")
-            ->setHtmlBody("Click " . $link . " to reset your password")
+            ->setSubject(Yii::$app->name . Yii::t('app', ': password reset'))
+            ->setHtmlBody(Yii::t('app', 'Click {link} to reset your password', ['link' => $link]))
             ->send();
     }
 }

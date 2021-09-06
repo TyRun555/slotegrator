@@ -5,6 +5,7 @@ namespace app\models;
 use app\models\base\BaseAR;
 use app\models\factory\Prize\PrizeFactory;
 use Yii;
+use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveQuery;
 use yii\web\IdentityInterface;
 use \app\models\UserAccount;
@@ -44,6 +45,34 @@ class User extends BaseAR implements IdentityInterface
     public static function tableName(): string
     {
         return '{{%users%}}';
+    }
+
+    /**
+     * @return array the validation rules.
+     */
+    public function rules(): array
+    {
+        return [
+            [['username', 'password', 'email'], 'required'],
+            ['email', 'email'],
+            ['email', 'string', 'max' => 255],
+            ['email', 'unique', 'targetClass' => self::class, 'targetAttribute' => 'email'],
+            ['username', 'string', 'max' => 255],
+            ['username', 'unique', 'targetClass' => self::class, 'targetAttribute' => 'username'],
+            ['password', 'string'],
+        ];
+    }
+
+    public function behaviors(): array
+    {
+        return array_merge(parent::behaviors(), [
+            'timestamp' => [
+                'class' => TimestampBehavior::class,
+                'createdAtAttribute' => 'created_at',
+                'updatedAtAttribute' => 'updated_at',
+                'value' => time()
+            ]
+        ]);
     }
 
     /**

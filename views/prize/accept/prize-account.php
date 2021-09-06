@@ -8,6 +8,6 @@ use yii\web\View;
 ?>
 <div class="d-flex align-items-center justify-content-center">
     <span class="text-success">
-        <?=Yii::t('app', 'Your account was successfully funded by: {points} points', ['points' => $prize->getAmount()])?>
+        <?= Yii::t('app', 'Your account was successfully funded by: {points} points', ['points' => $prize->getAmount()]) ?>
     </span>
 </div>

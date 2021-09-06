@@ -10,11 +10,12 @@ use yii\base\Model;
  */
 class PrizeDeliveryForm extends Model
 {
-    public $name;
-    public $email;
-    public $subject;
-    public $body;
-    public $verifyCode;
+    public $country;
+    public $zip;
+    public $city;
+    public $street;
+    public $building;
+    public $room;
 
 
     /**
@@ -23,11 +24,8 @@ class PrizeDeliveryForm extends Model
     public function rules()
     {
         return [
-            // name, email, subject and body are required
-            [['name', 'email', 'subject', 'body'], 'required'],
-            // email has to be a valid email address
-            ['email', 'email'],
-            // verifyCode needs to be entered correctly
+            [['country', 'zip', 'city', 'street', 'building', 'room'], 'required'],
+            [['country', 'zip', 'city', 'street', 'building', 'room'], 'string'],
             ['verifyCode', 'captcha'],
         ];
     }
@@ -40,26 +38,5 @@ class PrizeDeliveryForm extends Model
         return [
             'verifyCode' => 'Verification Code',
         ];
-    }
-
-    /**
-     * Sends an email to the specified email address using the information collected by this model.
-     * @param string $email the target email address
-     * @return bool whether the model passes validation
-     */
-    public function contact($email)
-    {
-        if ($this->validate()) {
-            Yii::$app->mailer->compose()
-                ->setTo($email)
-                ->setFrom([Yii::$app->params['senderEmail'] => Yii::$app->params['senderName']])
-                ->setReplyTo([$this->email => $this->name])
-                ->setSubject($this->subject)
-                ->setTextBody($this->body)
-                ->send();
-
-            return true;
-        }
-        return false;
     }
 }

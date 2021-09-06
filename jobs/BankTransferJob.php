@@ -13,8 +13,13 @@ use yii\queue\JobInterface;
  */
 class BankTransferJob extends BaseObject implements JobInterface
 {
-    #[ArrayShape(['bankAccountId' => "string", 'amount' => "int"])]
-    public $data;
+    /**
+     * TODO: change for real property name
+     * @var string - bank account id
+     */
+    public $bankAccountId;
+    /** @var int $amount */
+    public $amount;
 
     /**
      * Transfer money to winner bank account via HTTP request to bank API
@@ -29,7 +34,7 @@ class BankTransferJob extends BaseObject implements JobInterface
         $response = $client->createRequest()
             ->setMethod('POST')
             ->setUrl('http://example_bank_api.com/supplement')
-            ->setData(['amount' => $this->data['amount'], 'bankAccountId' => 1])
+            ->setData(['amount' => $this->amount, 'bankAccountId' => $this->bankAccountId])
             ->send();
         if (!$response->isOk) {
             Yii::warning(

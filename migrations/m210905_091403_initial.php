@@ -1,4 +1,5 @@
 <?php
+
 namespace app\migrations;
 
 use app\models\User;
@@ -54,7 +55,7 @@ class m210905_091403_initial extends Migration
 
         $this->createTable('user_account_transactions', [
             'id' => $this->primaryKey(),
-            'account_id' => $this->integer()->notNull()->unique(),
+            'account_id' => $this->integer()->notNull(),
             'created_at' => $this->integer(),
             'amount_change' => $this->integer()->unsigned(),
             'type' => $this->integer(1),
@@ -106,9 +107,7 @@ class m210905_091403_initial extends Migration
             'user_id' => $this->integer()->notNull(),
             'message_template' => $this->integer()->notNull(),
             'data' => $this->json(),
-            'status' => $this->integer(1),
             'created_at' => $this->integer(),
-            'sent_at' => $this->integer()
         ]);
 
         $this->addForeignKey(
@@ -117,7 +116,7 @@ class m210905_091403_initial extends Migration
             'user_id',
             'users',
             'id',
-            'NO ACTION',
+            'CASCADE',
             'CASCADE'
         );
         //endregion

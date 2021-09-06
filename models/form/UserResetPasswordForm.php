@@ -1,4 +1,5 @@
 <?php
+
 namespace app\models\form;
 
 use InvalidArgumentException;
@@ -19,7 +20,6 @@ class UserResetPasswordForm extends Model
 
     private User $_user;
 
-
     /**
      * Creates a form model given a token.
      *
@@ -30,12 +30,12 @@ class UserResetPasswordForm extends Model
     public function __construct($token, array $config = [])
     {
         if (empty($token) || !is_string($token)) {
-            throw new InvalidArgumentException('Password reset token cannot be blank.');
+            throw new InvalidArgumentException(Yii::t('app', 'Password reset token cannot be blank.'));
         }
         try {
             $this->_user = User::findByPasswordResetToken($token);
-        } catch (Throwable $e) {
-            throw new InvalidArgumentException('Wrong password reset token.');
+        } catch (Throwable) {
+            throw new InvalidArgumentException(Yii::t('app', 'Wrong password reset token.'));
         }
         parent::__construct($config);
     }

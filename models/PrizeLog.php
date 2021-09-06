@@ -2,25 +2,32 @@
 
 namespace app\models;
 
+use app\models\base\BaseAR;
+use JetBrains\PhpStorm\ArrayShape;
 use Yii;
+use yii\behaviors\TimestampBehavior;
+use yii\db\ActiveQuery;
 
 /**
  * This is the model class for table "prize_log".
+ * Contains  prize winning history by user
+ * TODO: apply this model in future, currently not used
  *
  * @property int $id
  * @property int $user_id
- * @property int $prize_id
  * @property int $created_at
  *
  * @property Prize $prize
  * @property User $user
+ * @property string $prize_hash [varchar(255)]
+ * @property int $prize_type [int]
  */
-class PrizeLog extends \app\models\base\BaseAR
+class PrizeLog extends BaseAR
 {
     /**
      * {@inheritdoc}
      */
-    public static function tableName()
+    public static function tableName(): string
     {
         return 'prize_log';
     }
@@ -28,7 +35,7 @@ class PrizeLog extends \app\models\base\BaseAR
     /**
      * {@inheritdoc}
      */
-    public function rules()
+    public function rules(): array
     {
         return [
             [['user_id', 'prize_id', 'created_at'], 'required'],
@@ -38,10 +45,22 @@ class PrizeLog extends \app\models\base\BaseAR
         ];
     }
 
+    public function behaviors(): array
+    {
+        return array_merge(parent::behaviors(), [
+            'timestamp' => [
+                'class' => TimestampBehavior::class,
+                'createdAtAttribute' => 'created_at',
+                'updatedAtAttribute' => false,
+                'value' => time()
+            ]
+        ]);
+    }
+
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels()
+    public function attributeLabels(): array
     {
         return [
             'id' => Yii::t('app', 'ID'),
@@ -54,9 +73,9 @@ class PrizeLog extends \app\models\base\BaseAR
     /**
      * Gets query for [[Prize]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
-    public function getPrize()
+    public function getPrize(): ActiveQuery
     {
         return $this->hasOne(Prize::class, ['id' => 'prize_id'])->inverseOf('prizeLogs');
     }
@@ -64,9 +83,9 @@ class PrizeLog extends \app\models\base\BaseAR
     /**
      * Gets query for [[User]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
-    public function getUser()
+    public function getUser(): ActiveQuery
     {
         return $this->hasOne(User::class, ['id' => 'user_id'])->inverseOf('prizeLogs');
     }

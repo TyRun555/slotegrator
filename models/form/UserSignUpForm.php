@@ -18,6 +18,7 @@ class UserSignUpForm extends Model
     public $username;
     public $password;
     public $verifyCode;
+
     /**
      * @return array the validation rules.
      */

@@ -4,6 +4,7 @@ namespace app\models;
 
 use JetBrains\PhpStorm\ArrayShape;
 use Yii;
+use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveQuery;
 use yii\web\View;
 
@@ -48,10 +49,21 @@ class StaffNotification extends \app\models\base\BaseAR
         ];
     }
 
+    public function behaviors(): array
+    {
+        return array_merge(parent::behaviors(), [
+            'timestamp' => [
+                'class' => TimestampBehavior::class,
+                'createdAtAttribute' => 'created_at',
+                'updatedAtAttribute' => false,
+                'value' => time()
+            ]
+        ]);
+    }
+
     /**
      * {@inheritdoc}
      */
-    #[ArrayShape(['id' => "string", 'user_id' => "string", 'message_template' => "string", 'data' => "string", 'created_at' => "string", 'sent_at' => "string"])]
     public function attributeLabels(): array
     {
         return [

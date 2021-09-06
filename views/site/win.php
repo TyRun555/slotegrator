@@ -13,7 +13,7 @@ $this->title = Yii::t('app', 'You won!');
 <div class="site-index">
     <div class="jumbotron text-center bg-transparent">
         <h1 class="display-4">Congratulations!</h1>
-        <?= $this->render($prize->getView(), compact('prize'))?>
+        <?= $this->render($prize->getView(), compact('prize')) ?>
         <?php
         echo Html::beginForm();
         echo Html::submitButton(Yii::t('app', 'Another one'), [

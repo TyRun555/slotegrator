@@ -2,19 +2,20 @@
 
 /* @var $this yii\web\View */
 /* @var $form yii\bootstrap4\ActiveForm */
+
 /* @var $model \app\models\form\UserRequestPasswordResetForm */
 
 use yii\bootstrap4\ActiveForm;
 use yii\bootstrap4\Html;
 use yii\captcha\Captcha;
 
-$this->title = 'Sign Up';
+$this->title = Yii::t('app', 'Password recovery');
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="site-login">
     <h1><?= Html::encode($this->title) ?></h1>
 
-    <p>Please fill out the following fields to sign up:</p>
+    <p><?= Yii::t('app', 'Please fill out the following fields to get password recovery link:') ?></p>
 
     <?php $form = ActiveForm::begin([
         'id' => 'login-form',

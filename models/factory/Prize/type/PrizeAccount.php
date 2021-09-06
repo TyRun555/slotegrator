@@ -2,7 +2,6 @@
 
 namespace app\models\factory\Prize\type;
 
-use app\jobs\BankTransferJob;
 use app\models\base\BaseModel;
 use app\models\factory\Prize\PrizeFactory;
 use app\models\interfaces\PrizeInterface;
@@ -20,13 +19,19 @@ use yii\db\ActiveQuery;
  * @property-read string $description
  * @property-read string $title
  * @property-read null|string $view
+ * @property-read null|string $acceptView
  * @property-read string $type
  */
 class PrizeAccount extends BaseModel implements PrizeInterface
 {
     private int $amount;
 
-    
+    //region General Methods
+    /**
+     * @inheritdoc
+     * @param array $config
+     * @param bool $restore - model restoring from hash
+     */
     public function __construct($config = [], bool $restore = false)
     {
         parent::__construct($config);
@@ -35,56 +40,58 @@ class PrizeAccount extends BaseModel implements PrizeInterface
             $this->amount = rand(100, 10000);
         }
     }
-    
-    /** @inheritdoc  */
+    //endregion
+
+    //region Interface Implementation
+    /** @inheritdoc */
     public function getView(): ?string
     {
         return '/prize/prize-account';
     }
-    
-    /** @inheritdoc  */
+
+    /** @inheritdoc */
     public function getAcceptView(): ?string
     {
         return '/prize/accept/prize-account';
     }
-    
-    /** @inheritdoc  */
+
+    /** @inheritdoc */
     public function getType(): string
     {
         return Yii::t('app', 'points');
     }
-    
-    /** @inheritdoc  */
+
+    /** @inheritdoc */
     public function getTitle(): string
     {
         return Yii::t('app', 'Account Points');
     }
-    
-    /** @inheritdoc  */
+
+    /** @inheritdoc */
     public function getDescription(): string
     {
         return Yii::t('app', 'You can transfer prize amount account');
     }
-    
-    /** @inheritdoc  */
+
+    /** @inheritdoc */
     public function getLog(): ActiveQuery
     {
         return PrizeLog::find()->where(['prize_type' => PrizeFactory::TYPE_ACCOUNT, 'user_id' => Yii::$app->user->id]);
     }
-    
-    /** @inheritdoc  */
+
+    /** @inheritdoc */
     public function handleAcceptance(int $acceptType = null): bool
     {
         return UserAccountTransactions::transferToUser($this->amount);
     }
-    
-    /** @inheritdoc  */
+
+    /** @inheritdoc */
     public function getAmount(): int
     {
         return $this->amount;
     }
-    
-    /** @inheritdoc  */
+
+    /** @inheritdoc */
     public function hash(): string
     {
         $data = json_encode([
@@ -93,8 +100,8 @@ class PrizeAccount extends BaseModel implements PrizeInterface
         ]);
         return Yii::$app->security->encryptByKey($data, $_ENV['PRIZES_HASH_KEY']);
     }
-    
-    /** @inheritdoc  */
+
+    /** @inheritdoc */
     public function restore(object $data): void
     {
         if (!isset($data->amount)) {
@@ -102,16 +109,17 @@ class PrizeAccount extends BaseModel implements PrizeInterface
         }
         $this->amount = $data->amount;
     }
-    
-    /** @inheritdoc  */
+
+    /** @inheritdoc */
     public function reserve(): bool
     {
         return true;
     }
-    
-    /** @inheritdoc  */
+
+    /** @inheritdoc */
     public function release(): bool
     {
         return true;
     }
+    //endregion
 }
