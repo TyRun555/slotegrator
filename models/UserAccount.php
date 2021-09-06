@@ -3,7 +3,9 @@
 namespace app\models;
 
 use app\models\base\BaseAR;
+use JetBrains\PhpStorm\ArrayShape;
 use Yii;
+use yii\db\ActiveQuery;
 
 /**
  * This is the model class for table "user_account".
@@ -13,7 +15,7 @@ use Yii;
  * @property int|null $amount
  *
  * @property User $user
- * @property UserAccountTransactions $userAccountTransaction
+ * @property-read ActiveQuery $userAccountTransactions
  */
 class UserAccount extends BaseAR
 {
@@ -41,7 +43,8 @@ class UserAccount extends BaseAR
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels()
+    #[ArrayShape(['id' => "string", 'user_id' => "string", 'amount' => "string"])]
+    public function attributeLabels(): array
     {
         return [
             'id' => Yii::t('app', 'ID'),
@@ -53,9 +56,9 @@ class UserAccount extends BaseAR
     /**
      * Gets query for [[User]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
-    public function getUser()
+    public function getUser(): ActiveQuery
     {
         return $this->hasOne(User::class, ['id' => 'user_id'])->inverseOf('userAccount');
     }
@@ -63,9 +66,9 @@ class UserAccount extends BaseAR
     /**
      * Gets query for [[UserAccountTransaction]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
-    public function getUserAccountTransaction()
+    public function getUserAccountTransactions(): ActiveQuery
     {
         return $this->hasOne(UserAccountTransactions::class, ['account_id' => 'id'])->inverseOf('account');
     }

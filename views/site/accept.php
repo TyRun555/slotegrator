@@ -10,7 +10,7 @@ $this->title = 'You won!';
 ?>
 <div class="site-index">
     <div class="jumbotron text-center bg-transparent">
-        <h1 class="display-4">Almost done!</h1>
+        <h1 class="display-4">You are awesome!</h1>
         <?=$this->render($prize->getAcceptView(), compact('prize'))?>
     </div>
 </div>
