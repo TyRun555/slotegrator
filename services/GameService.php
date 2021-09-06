@@ -163,7 +163,7 @@ class GameService
      */
     private function updateSettings(array $data): bool
     {
-        Yii::$app->db->transaction->begin();
+        Yii::$app->db->beginTransaction();
         try
         {
             Yii::$app->db->createCommand()->update('settings', $data, ['id' => 1])->execute();

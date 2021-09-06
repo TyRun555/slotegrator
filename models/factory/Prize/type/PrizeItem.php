@@ -13,6 +13,7 @@ use yii\base\Exception;
 use yii\base\InvalidArgumentException;
 use yii\db\ActiveQuery;
 use yii\db\Expression;
+use yii\web\NotFoundHttpException;
 
 /**
  * Represents item prize
@@ -33,17 +34,22 @@ class PrizeItem extends BaseModel implements PrizeInterface
 {
     private Prize $item;
     
+    /**
+     * @param array $config
+     * @param bool $restore
+     * @throws NotFoundHttpException
+     */
     public function __construct($config = [], bool $restore = false)
     {
         parent::__construct($config);
     
         /** We need to do this only if prize was not creating from hash  */
         if (!$restore) {
-            $this->item = $this->getPrize();
-            if(!$this->item)
+            $item = $this->getPrize();
+            if(!$item)
             {
-                throw new Exception(Yii::t('app', 'We are sorry, no prizes left!'));
-            }
+                throw new NotFoundHttpException(Yii::t('app', 'We are sorry, no prizes left!'));
+            }$this->item = $item;
             $this->item->status = Prize::STATUS_PENDING;
             $this->item->save(false);
         }
