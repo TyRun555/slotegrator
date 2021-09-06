@@ -1,10 +1,12 @@
 <?php
 
 use app\models\factory\Prize\type\PrizeMoney;
+use app\models\interfaces\PrizeInterface;
 use yii\bootstrap4\Html;
+use yii\web\View;
 
-/* @var $this \yii\web\View */
-/* @var $prize \app\models\interfaces\PrizeInterface */
+/* @var $this View */
+/* @var $prize PrizeInterface */
 ?>
 <div class="row">
     <div class="col-12">

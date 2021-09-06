@@ -7,9 +7,14 @@ use yii\db\ActiveQuery;
 interface PrizeInterface
 {
     /**
-     * @return string|null - path of view file
+     * @return string|null - path of view file which renders prize details
      */
     public function getView(): ?string;
+    
+    /**
+     * @return string|null - path of view file which renders prize accept info
+     */
+    public function getAcceptView(): ?string;
 
     /**
      * @return int - amount(quantity) of prize
@@ -47,7 +52,23 @@ interface PrizeInterface
     public function hash(): string;
 
     /**
-     * @return void - restore object attributes from hash string
+     * @return void - restore object attributes from data array specific for each prize type
      */
-    public function restoreFromHash(string $hash);
+    public function restore(object $data);
+    
+    /**
+     * Each prize type should be reserved while user won it but not yet accepted
+     * if it's not necessary just return true in implementation
+     *
+     * @return bool - whether reserving was successful
+     */
+    public function reserve(): bool;
+    
+    /**
+     * Each prize type must be restored when user rejects the won prize
+     * if it's not necessary just return true in implementation
+     *
+     * @return bool - whether reserving was successful
+     */
+    public function release(): bool;
 }

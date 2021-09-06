@@ -3,14 +3,14 @@
 namespace app\models\factory\Prize\type;
 
 use app\models\base\BaseModel;
-use app\models\factory\PrizeFactory;
+use app\models\factory\Prize\PrizeFactory;
 use app\models\interfaces\PrizeInterface;
 use app\models\Prize;
 use app\models\PrizeLog;
 use app\models\StaffNotification;
-use app\models\UserAccountTransactions;
 use Yii;
 use yii\base\Exception;
+use yii\base\InvalidArgumentException;
 use yii\db\ActiveQuery;
 use yii\db\Expression;
 
@@ -26,55 +26,67 @@ use yii\db\Expression;
  * @property-read int $amount
  * @property-read Prize $prize
  * @property-read string $itemDescription
+ * @property null|string $acceptView
  * @property-read string $type
  */
 class PrizeItem extends BaseModel implements PrizeInterface
 {
     private Prize $item;
-
-    public function __construct($config = [])
+    
+    public function __construct($config = [], bool $restore = false)
     {
         parent::__construct($config);
-        $this->item = $this->getPrize();
-        if (!$this->item) {
-            throw new Exception(Yii::t('app', 'We are sorry, no prizes left!'));
+    
+        /** We need to do this only if prize was not creating from hash  */
+        if (!$restore) {
+            $this->item = $this->getPrize();
+            if(!$this->item)
+            {
+                throw new Exception(Yii::t('app', 'We are sorry, no prizes left!'));
+            }
+            $this->item->status = Prize::STATUS_PENDING;
+            $this->item->save(false);
         }
-        $this->item->status = Prize::STATUS_PENDING;
-        $this->item->save(false);
     }
-
+    
     /** @inheritdoc */
     public function getView(): ?string
     {
         return '/prize/prize-item';
     }
-
+    
+    /** @inheritdoc  */
+    public function getAcceptView(): ?string
+    {
+        return '/prize/accept/prize-item';
+    }
+    
     /** @inheritdoc */
     public function getType(): string
     {
         return Yii::t('app', 'item');
     }
-
+    
     /** @inheritdoc */
     public function getTitle(): string
     {
         return Yii::t('app', $this->item->title);
     }
-
+    
     /** @inheritdoc */
     public function getDescription(): string
     {
         return Yii::t('app', $this->item->description)
-            . PHP_EOL
-            . Yii::t('app', 'Fill the form below to get the prize');
+            .PHP_EOL
+            .Yii::t('app', 'Fill the form below to get the prize');
     }
-
+    
     /** @inheritdoc */
     public function getLog(): ActiveQuery
     {
         return PrizeLog::find()->where(['prize_type' => PrizeFactory::TYPE_ITEM, 'user_id' => Yii::$app->user->id]);
     }
-
+    
     /** @inheritdoc */
     public function handleReceiving(int $acceptType = null): bool
     {
@@ -85,33 +97,54 @@ class PrizeItem extends BaseModel implements PrizeInterface
         $this->item->status = Prize::STATUS_AVAILABLE;
         return $this->item->save();
     }
-
+    
     /** @inheritdoc */
     public function getAmount(): int
     {
         return 1;
     }
-
+    
     /** @inheritdoc */
     public function hash(): string
     {
-        return Yii::$app->security->encryptByKey(json_encode(['itemId' => $this->item->id]), $_ENV['PRIZES_HASH_KEY']);
+        $data = json_encode([
+            'itemId' => $this->item->id,
+            'type'   => PrizeFactory::TYPE_ITEM
+        ]);
+        return Yii::$app->security->encryptByKey($data, $_ENV['PRIZES_HASH_KEY']);
     }
-
+    
     /** @inheritdoc */
-    public function restoreFromHash(string $hash): void
+    public function restore(object $data): void
     {
-        $prizeId = json_decode(Yii::$app->security->decryptByKey($hash, $_ENV['PRIZES_HASH_KEY']))['itemId'];
-        $this->item = Prize::findOne($prizeId);
+        if(!isset($data->itemId))
+        {
+            throw new InvalidArgumentException(Yii::t('app', 'Data array must contain amount key!'));
+        }
+        $this->item = Prize::findOne($data->itemId);
     }
-
+    
     /**
      * Gets random available prize item
      *
-     * @return \app\models\Prize|null
+     * @return Prize|null
      */
     private function getPrize(): ?Prize
     {
         return Prize::find()->where(['status' => Prize::STATUS_AVAILABLE])->orderBy(new Expression('rand()'))->one();
+    }
+    
+    /** @inheritdoc */
+    public function reserve(): bool
+    {
+        $this->item->status = Prize::STATUS_PENDING;
+        return $this->item->save();
+    }
+    
+    /** @inheritdoc */
+    public function release(): bool
+    {
+        $this->item->status = Prize::STATUS_AVAILABLE;
+        return $this->item->save();
     }
 }

@@ -1,20 +1,23 @@
 <?php
+
+use app\models\interfaces\PrizeInterface;
 use yii\helpers\Html;
+use yii\web\View;
 
-/* @var $this \yii\web\View */
+/* @var $this View */
 /* @var $prizeView string */
-/* @var $prize \app\models\interfaces\PrizeInterface */
+/* @var $prize PrizeInterface */
 
-$this->title = 'You won!';
+$this->title = Yii::t('app', 'You won!');
 ?>
 <div class="site-index">
     <div class="jumbotron text-center bg-transparent">
         <h1 class="display-4">Congratulations!</h1>
-        <?= $this->render($prizeView, compact('prize'))?>
+        <?= $this->render($prize->getView(), compact('prize'))?>
         <?php
         echo Html::beginForm();
-        echo Html::submitButton('Another one', [
-            'name' => 'play',
+        echo Html::submitButton(Yii::t('app', 'Another one'), [
+            'name' => 'replay',
             'value' => 1,
             'class' => 'btn btn-lg btn-secondary'
         ]);

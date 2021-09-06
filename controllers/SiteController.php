@@ -3,8 +3,11 @@
 namespace app\controllers;
 
 use app\controllers\base\BaseController;
+use app\models\factory\Prize\PrizeFactory;
+use app\models\factory\Prize\type\PrizeItem;
 use app\services\GameService;
 use Yii;
+use yii\base\Exception;
 use yii\filters\AccessControl;
 use yii\helpers\Url;
 use yii\web\Cookie;
@@ -61,7 +64,7 @@ class SiteController extends BaseController
      * Displays game page.
      *
      * @return string - view string
-     * @throws \yii\base\Exception - if something wrong with game service
+     * @throws Exception - if something wrong with game service
      */
     public function actionIndex()
     {
@@ -69,13 +72,22 @@ class SiteController extends BaseController
             return $this->render('index');
         }
         if ($this->request->isPost) {
+            $gameService = new GameService();
             if ($this->request->post('play')) {
-                $gameService = new GameService();
+                
                 $prize = $gameService->getPrize();
-                $prizeView = $prize->getView();
-                return $this->render('win', compact('prizeView', 'prize'));
+                return $this->render('win', compact('prize'));
+                
+            } elseif ($this->request->post('replay')) {
+                
+                $gameService->releaseCurrent();
+                $prize = $gameService->getPrize();
+                return $this->render('win', compact('prize'));
+                
             } elseif ($this->request->post('accept')) {
-                return $this->render('accept', compact('prizeView'));
+                $prize = $gameService->acceptCurrent();
+                return $this->render('accept', compact('prize'));
+                
             }
 
         }

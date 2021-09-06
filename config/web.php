@@ -11,7 +11,7 @@ $db = require __DIR__ . '/db.php';
 
 $config = [
     'id' => 'Mighty kind',
-    'name' => 'Mighty kind',
+    'name' => Yii::t('app', 'Mighty kind'),
     'basePath' => dirname(__DIR__),
     'bootstrap' => ['log', 'user'],
     'language' => 'en-EN',
@@ -22,7 +22,7 @@ $config = [
     'components' => [
         'request' => [
             // !!! insert a secret key in the following (if it is empty) - this is required by cookie validation
-            'cookieValidationKey' => 'qu2D6DpWfnkXopJYgzMzwYyxOGT1Gh78',
+            'cookieValidationKey' => $_ENV['COOKIE_VALIDATION_KEY'],
         ],
         'cache' => [
             'class' => 'yii\caching\FileCache',

@@ -1,9 +1,12 @@
 <?php
 /* @var $this yii\web\View */
-?>
-<h1>account/index</h1>
 
-<p>
-    You may change the content of this page by modifying
-    the file <code><?= __FILE__; ?></code>.
-</p>
+$this->title   = Yii::t('app', 'Account');
+$accountPoints = Yii::$app->user->identity->account->amount;
+?>
+<h1> <?=Yii::t('app', 'Account history')?></h1>
+
+<h2>
+    <?=Yii::t('app', 'Amount: {points} points', ['points' => $accountPoints])?>
+</h2>
+<p><?=Yii::t('app', 'See your account history here soon')?></p>

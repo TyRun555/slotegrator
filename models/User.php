@@ -3,6 +3,7 @@
 namespace app\models;
 
 use app\models\base\BaseAR;
+use app\models\factory\Prize\PrizeFactory;
 use Yii;
 use yii\db\ActiveQuery;
 use yii\web\IdentityInterface;

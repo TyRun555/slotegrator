@@ -16,12 +16,12 @@ AppAsset::register($this);
 ?>
 <?php $this->beginPage() ?>
 <!DOCTYPE html>
-<html lang="<?= Yii::$app->language ?>" class="h-100">
+<html lang="<?=Yii::$app->language?>" class="h-100">
 <head>
-    <meta charset="<?= Yii::$app->charset ?>">
+    <meta charset="<?=Yii::$app->charset?>">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <?php $this->registerCsrfMetaTags() ?>
-    <title><?= Html::encode($this->title) ?></title>
+    <title><?=Html::encode($this->title)?></title>
     <?php $this->head() ?>
 </head>
 <body class="d-flex flex-column h-100">
@@ -31,33 +31,40 @@ AppAsset::register($this);
     <?php
     NavBar::begin([
         'brandLabel' => Yii::$app->name,
-        'brandUrl' => Yii::$app->homeUrl,
-        'options' => [
+        'brandUrl'   => Yii::$app->homeUrl,
+        'options'    => [
             'class' => 'navbar navbar-expand-md navbar-dark bg-dark fixed-top',
         ],
     ]);
-
+    
     $items = [
         ['label' => 'Home', 'url' => ['/site/index']],
     ];
-
-    if (Yii::$app->user->isGuest) {
+    
+    if(Yii::$app->user->isGuest)
+    {
         $items[] = ['label' => 'SignIn', 'url' => ['/site/login']];
-    } else {
-        $items[] = ['label' => 'Account', 'url' => ['/account/index']];
+    }
+    else
+    {
+        $accountPoints = Yii::$app->user->identity->account->amount;
+        $items[] = [
+                'label' => Yii::t('app', 'Account: {points} points', ['points' => $accountPoints]),
+                'url' => ['/account/index']];
         $items[] = '<li>'
-            . Html::beginForm(['/site/logout'], 'post', ['class' => 'form-inline'])
-            . Html::submitButton(
-                'Logout (' . Yii::$app->user->identity?->username . ')',
+            .Html::beginForm(['/site/logout'], 'post', ['class' => 'form-inline'])
+            .Html::submitButton(
+                'Logout ('.Yii::$app->user->identity?->username.')',
                 ['class' => 'btn btn-link logout']
             )
-            . Html::endForm()
-            . '</li>';
+            .Html::endForm()
+            .'</li>';
     }
-
+    
+    
     echo Nav::widget([
         'options' => ['class' => 'navbar-nav'],
-        'items' => $items,
+        'items'   => $items,
     ]);
     NavBar::end();
     ?>
@@ -65,22 +72,22 @@ AppAsset::register($this);
 
 <main role="main" class="flex-shrink-0">
     <div class="container">
-        <?= Breadcrumbs::widget([
+        <?=Breadcrumbs::widget([
             'links' => isset($this->params['breadcrumbs']) ? $this->params['breadcrumbs'] : [],
-        ]) ?>
-        <?= Alert::widget() ?>
-        <?= $content ?>
+        ])?>
+        <?=Alert::widget()?>
+        <?=$content?>
     </div>
 </main>
 
 <footer class="footer mt-auto py-3 text-muted">
     <div class="container">
-        <p class="float-left">&copy; TyRun <?= date('Y') ?></p>
+        <p class="float-left">&copy; TyRun <?=date('Y')?></p>
         <p class="float-right">
-            <?= \Yii::t('yii', 'Powered by {yii}', [
+            <?=\Yii::t('yii', 'Powered by {yii}', [
                 'yii' => '<a href="https://www.yiiframework.com/" target="_blank" rel="external">'
-                    . \Yii::t('yii', 'Yii Framework') . '</a>'
-            ]) ?>
+                    .\Yii::t('yii', 'Yii Framework').'</a>'
+            ])?>
         </p>
     </div>
 </footer>

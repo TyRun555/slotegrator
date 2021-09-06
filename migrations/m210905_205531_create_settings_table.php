@@ -15,9 +15,10 @@ class m210905_205531_create_settings_table extends Migration
     {
         $this->createTable('{{%settings}}', [
             'id' => $this->primaryKey(),
-            'money_amount_rest' => $this->integer()
+            'money_pool_amount' => $this->integer()->defaultValue(0),
+            'money_pool_amount_reserved' => $this->integer()->defaultValue(0),
         ]);
-        $this->insert('{{%settings}}', ['money_amount_rest' => $_ENV['START_MONEY_POOL']]);
+        $this->insert('{{%settings}}', ['money_pool_amount' => $_ENV['START_MONEY_POOL']]);
     }
 
     /**
