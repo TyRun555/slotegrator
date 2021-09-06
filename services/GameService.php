@@ -16,19 +16,35 @@ use yii\web\NotAcceptableHttpException;
 
 /**
  * Core game class that handle prize creation and perform various checks
- *
  */
 class GameService
 {
+    //region Object Attributes
     #[ArrayShape(['money_pool_amount' => "integer", 'money_pool_amount_reserved' => 'integer'])]
     private array $settings;
+    //endregion
     
+    //region General Methods
     /**
      * @throws Exception
      */
     public function __construct()
     {
         $this->getSettings();
+    }
+    
+    private function getSettings()
+    {
+        try
+        {
+            $this->settings = Yii::$app->db
+                ->createCommand(new Expression('SELECT * FROM `settings` WHERE `id` = 1'))
+                ->queryOne();
+        }
+        catch(\Throwable $e)
+        {
+            throw new Exception(Yii::t('app', 'Can\'t get settings from database!'), 500);
+        }
     }
     
     /**
@@ -48,20 +64,11 @@ class GameService
         return $prize;
     }
     
-    private function getSettings()
-    {
-        try
-        {
-            $this->settings = Yii::$app->db
-                ->createCommand(new Expression('SELECT * FROM `settings` WHERE `id` = 1'))
-                ->queryOne();
-        }
-        catch(\Throwable $e)
-        {
-            throw new Exception(Yii::t('app', 'Can\'t get settings from database!'), 500);
-        }
-    }
-    
+    /**
+     * Checks if there is available item type prize
+     *
+     * @return bool
+     */
     private static function checkAvailablePrizeItems(): bool
     {
         return (bool)Prize::findOne(['status' => Prize::STATUS_AVAILABLE]);
@@ -169,7 +176,9 @@ class GameService
         }
         return true;
     }
+    //endregion
     
+    //region Game Methods
     /**
      * Get the current won prize from session hash and release it from reserve
      */
@@ -196,7 +205,7 @@ class GameService
         if ($prize instanceof PrizeMoney) {
             $prize->setAcceptType(Yii::$app->request->post('acceptType'));
         }
-    
+        $prize->handleAcceptance();
         $this->gameOver();
         return $prize;
     }
@@ -209,4 +218,5 @@ class GameService
     {
         Yii::$app->session->set('prizeAccepted', true);
     }
+    //endregion
 }

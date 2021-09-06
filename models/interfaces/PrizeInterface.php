@@ -44,7 +44,7 @@ interface PrizeInterface
     /**
      * @return bool - whether prise receiving was successful or not
      */
-    public function handleReceiving(): bool;
+    public function handleAcceptance(): bool;
 
     /**
      * @return string - hashed data of generated prize

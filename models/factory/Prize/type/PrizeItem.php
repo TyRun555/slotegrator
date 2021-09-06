@@ -88,7 +88,7 @@ class PrizeItem extends BaseModel implements PrizeInterface
     }
     
     /** @inheritdoc */
-    public function handleReceiving(int $acceptType = null): bool
+    public function handleAcceptance(int $acceptType = null): bool
     {
         $staffNotification = new StaffNotification([
             'message_template' => StaffNotification::TEMPLATE_PRIZE_ITEM

@@ -73,7 +73,7 @@ class PrizeAccount extends BaseModel implements PrizeInterface
     }
     
     /** @inheritdoc  */
-    public function handleReceiving(int $acceptType = null): bool
+    public function handleAcceptance(int $acceptType = null): bool
     {
         return UserAccountTransactions::transferToUser($this->amount);
     }

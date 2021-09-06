@@ -109,7 +109,7 @@ class PrizeMoney extends BaseModel implements PrizeInterface
     }
     
     /** @inheritdoc */
-    public function handleReceiving(): bool
+    public function handleAcceptance(): bool
     {
         if($this->acceptType === self::ACCEPT_TO_ACCOUNT)
         {
