@@ -2,6 +2,7 @@
 
 namespace app\models;
 
+use app\models\base\BaseAR;
 use Yii;
 
 /**
@@ -14,7 +15,7 @@ use Yii;
  * @property User $user
  * @property UserAccountTransactions $userAccountTransaction
  */
-class UserAccount extends \app\models\base\BaseAR
+class UserAccount extends BaseAR
 {
     /**
      * {@inheritdoc}
@@ -66,6 +67,6 @@ class UserAccount extends \app\models\base\BaseAR
      */
     public function getUserAccountTransaction()
     {
-        return $this->hasOne(UserAccountTransaction::class, ['account_id' => 'id'])->inverseOf('account');
+        return $this->hasOne(UserAccountTransactions::class, ['account_id' => 'id'])->inverseOf('account');
     }
 }
