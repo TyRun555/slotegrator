@@ -36,10 +36,7 @@ class PrizeController extends Controller
             echo Yii::t('app', 'Prize (id: {prizeId}) added successfully', ['prizeId' => $prize->id]) . PHP_EOL;
             return ExitCode::OK;
         }
-        foreach ($prize->errors as $attribute => $message) {
-            echo $attribute . Yii::t('app', ' has error: ') . implode(PHP_EOL, $message) . PHP_EOL;
-        }
-        return ExitCode::DATAERR;
+        return $this->echoPrizeModelErrors($prize);
     }
 
     /**
@@ -51,9 +48,25 @@ class PrizeController extends Controller
      */
     public function actionChangePrize(string $id, string $attribute, int $value): int
     {
-        $prize = new Prize();
-        echo $message . "\n";
+        $prize = Prize::findOne($id);
+        if (!$prize) {
+            echo Yii::t('app', 'Prize not found!');
+            return ExitCode::DATAERR;
+        }
 
-        return ExitCode::OK;
+        if ($prize->save()) {
+            echo Yii::t('app', 'Prize (id: {prizeId}) added successfully', ['prizeId' => $prize->id]) . PHP_EOL;
+            return ExitCode::OK;
+        }
+        return $this->echoPrizeModelErrors($prize);
     }
+
+    private function echoPrizeModelErrors(Prize $prize): int
+    {
+        foreach ($prize->errors as $attribute => $message) {
+            echo $attribute . Yii::t('app', ' has error: ') . implode(PHP_EOL, $message) . PHP_EOL;
+        }
+        return ExitCode::DATAERR;
+    }
+
 }

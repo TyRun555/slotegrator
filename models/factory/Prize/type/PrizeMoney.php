@@ -55,7 +55,12 @@ class PrizeMoney extends BaseModel implements PrizeInterface
         parent::__construct($config);
         /** We need to do this only if prize was not creating from hash  */
         if (!$restore) {
-            $this->amount = rand(100, 10000);
+            $gameService = new GameService();
+            $maxAmount = $gameService->getMoneyPoolRest() > $_ENV['MAX_MONEY_WIN_AMOUNT']
+                ? $_ENV['MAX_MONEY_WIN_AMOUNT']
+                : $gameService->getMoneyPoolRest();
+            $this->amount = rand(100, $maxAmount);
+            $this->reserve();
         }
     }
 

@@ -55,9 +55,6 @@ $config = [
         'prize' => [
             'class' => PrizeController::class
         ],
-        'queue-run' => [
-            'class' => QueueRunController::class
-        ]
     ],
 
 ];

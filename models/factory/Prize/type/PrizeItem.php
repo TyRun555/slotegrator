@@ -50,8 +50,7 @@ class PrizeItem extends BaseModel implements PrizeInterface
                 throw new NotFoundHttpException(Yii::t('app', 'We are sorry, no prizes left!'));
             }
             $this->item = $item;
-            $this->item->status = Prize::STATUS_PENDING;
-            $this->item->save(false);
+            $this->reserve();
         }
     }
     //end region

@@ -90,7 +90,7 @@ class GameService
     private function getPrizeType(): int
     {
         /** Get all possible prize types */
-        $types = array_keys(PrizeFactory::TYPES_CLASS_MAPPING);
+        $types = array_flip(array_keys(PrizeFactory::TYPES_CLASS_MAPPING));
 
         /** Remove item prizes if not any available exist */
         if (!self::checkAvailablePrizeItems()) {
@@ -104,7 +104,8 @@ class GameService
         if (empty($types)) {
             throw new NotFoundHttpException(Yii::t('app', 'There are no prizes left ,comeback later!'));
         }
-        return array_rand(array_flip($types));
+
+        return array_rand($types);
     }
 
     /**
@@ -174,6 +175,15 @@ class GameService
         }
         return true;
     }
+
+    /**
+     * get rest of money pool
+     * @return int
+     */
+    public function getMoneyPoolRest(): int
+    {
+        return $this->settings['money_pool_amount'];
+    }
     //endregion
 
     //region Game Methods
@@ -238,4 +248,5 @@ class GameService
         return !(bool)Yii::$app->session->get('prizeAccepted');
     }
     //endregion
+
 }
