@@ -15,7 +15,7 @@ All bank account transfer are made via queue. (database provider)
 
 - clone repo
 - run ``composer install``
-- provide environment in .env.local (need to create one from example .env)
+- provide environment in .env.local and .env.test.local (need to create one from example .env and .env.test respectively)
 - run ``./yii migrate``
 - add some item type prizes to database (you can do it via console command as well)
 - run ``./yii serve`` or use your local web server (webroot is web/)
