@@ -156,9 +156,7 @@ class SiteController extends BaseController
                 $model->password = '';
             }
         }
-        return $this->render('login', [
-            'model' => $model,
-        ]);
+        return $this->render('login', compact('model'));
     }
 
     /**
