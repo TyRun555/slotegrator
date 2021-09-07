@@ -49,7 +49,7 @@ class PrizeFactory
     {
         $restore = true;
         $data = json_decode(Yii::$app->security->decryptByKey($hash, $_ENV['PRIZES_HASH_KEY']));
-        $restore = true;
+
         $prize = new (self::TYPES_CLASS_MAPPING[$data->type])([], $restore);
         $prize->restore($data);
         return $prize;
