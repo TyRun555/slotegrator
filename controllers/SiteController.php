@@ -81,7 +81,7 @@ class SiteController extends BaseController
         if ($this->request->isPost) {
             if ($this->request->post('play')) {
                 /**
-                 * reserving implemented in prize constrictor
+                 * reserving implemented in prize constructor
                  */
                 $prize = $gameService->getPrize();
                 return $this->render('win', compact('prize'));
